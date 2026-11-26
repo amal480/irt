@@ -1,0 +1,6 @@
+# The method (irt/) uses only the Python standard library (3.10+).
+# Stage 1 data preparation (irt/prepare_export.py):
+pandas>=1.5
+numpy>=1.23
+# Tests:
+pytest>=7
