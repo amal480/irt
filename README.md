@@ -68,7 +68,8 @@ Steps 3-4 are fitted on the calibration responses only and then applied to later
 | Effective K, guess damping, repeats, discrimination, context, Eqs. 19-22 (5.4) | `irt/equations.py` `k_student`, `k_multipliers`, `repeat_multiplier`; `irt/mstep.py` `point_biserial`, `discrimination_multiplier` |
 | Time winsorizing, Eq. 23 (5.5) | `irt/preprocessing.py` `fit_time_stats` |
 | Live updates between calibrations (Algorithm 1, line 7) | `irt/model.py` `Model.update`, `Model.predict` |
-| Split and metrics ECE / RMSE / AUC, Eqs. 24-26 (6) | `irt/evaluation.py` |
+| Baselines: naive p-correct, standard Elo, Rasch by marginal maximum likelihood (6.2) | `irt/baselines.py` |
+| Split and metrics ECE / RMSE / AUC, Eqs. 24-26 (6) | `irt/evaluation.py`, `scripts/evaluate.py` |
 
 All hyperparameters are in `irt/config.py`. Defaults are the configuration behind the paper's results: a question is
 stable after 10 qualified responses (first attempts that are not probable guesses); the M-step uses the qualified
@@ -81,14 +82,16 @@ Each auxiliary component is a switch in `Components` (`irt/config.py`): `fatigue
 
 ## Running it
 
-Python 3.10+. The method uses the standard library only; stage 1 needs pandas and numpy.
+Python 3.10+. The method uses the standard library only; stage 1, the Rasch baseline and the evaluation script
+need pandas and numpy.
 
 ```bash
 pip install -r requirements.txt
 
 python scripts/prepare_data.py --check     # stage 1: re-prepare data/raw/ and check it equals data/prepared/
-python scripts/evaluate.py                 # the paper's Table 2, row "Ours" (about 2 minutes)
-python scripts/evaluate.py --disable time_signal discrimination   # the same with components switched off
+python scripts/evaluate.py                 # the paper's Table 2: ours vs Elo, Rasch, p-correct
+python scripts/evaluate.py --boot 0        # the same without the significance marks
+python scripts/evaluate.py --disable time_signal discrimination   # our method with components switched off
 python -m pytest                           # unit tests
 ```
 
